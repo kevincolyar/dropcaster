@@ -155,6 +155,8 @@ In order to generate episode pages, the command would look as follows:
 
         dropcaster episodes/episode* --channel channel.yml --episode-pages
 
+If any of the files to be generated already exist, Dropcaster will not overwrite them. Adding the `--force` option forces dropcaster to overwrite existing files.
+
 The index.html page could be written with the same command by redirecting dropcaster's output to a file:
 
         dropcaster episodes/episode* --channel channel.yml --episode-pages --channel-template channel.html.erb > index.html
