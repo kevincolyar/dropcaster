@@ -216,6 +216,12 @@ Dropcaster follows the classic UNIX mantra "no news are good news". That means, 
 
 For further inspection of an error, dropcaster can write additional diagnostic messages to STDERR. This behavior is controlled with the --verbose and --trace command line switches.
 
+Developers and other brave people may run dropcaster under a debugger. [ruby-debug](http://bashdb.sourceforge.net/ruby-debug.html) works fine. It is installed as `sudo gem install ruby-debug`. The following example call will run dropcaster under the debugger:
+
+    rdebug bin/dropcaster -- episodes/episode* --channel channel.yml --channel-template templates/channel.html.erb --episode-pages 
+
+The options provided here are for creating episode pages (see the section on it above). The important difference to a regular dropcaster execution is that rdebug expects application parameters to be headed by two dashes.
+
 Contributing to Dropcaster
 ==========================
 Dropcaster is hosted at [Github](http://github.com/nerab/dropcaster):
