@@ -97,6 +97,11 @@ opts = OptionParser.new do |opts|
     exit 0
   end
 
+  opts.on("--force", "Force overwriting of existing files.") do
+    Dropcaster.logger.info "Overwriting existing files"
+    options[:force] = true
+  end
+
   opts.on("--episode-pages", "Generate a separate file for each episode.") do
     Dropcaster.logger.info "Generating a separate file for each episode"
     options[:episode_pages] = true
