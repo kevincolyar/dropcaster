@@ -168,6 +168,12 @@ For writing the output to a file, just redirect the ouput of the above command:
 
     dropcaster | xmllint --format - > index.rss
 
+Troubleshooting
+===============
+Dropcaster follows the classic UNIX mantra "no news are good news". That means, if everything runs as expected, no further messages are written out, especially no success messages. The only output is the generated feed, which appears on the regular STDOUT stream. Any errors or warnings will be written to STDERR so that they don't interfer with the output.
+
+For further inspection of an error, dropcaster can write additional diagnostic messages to STDERR. This behavior is controlled with the --verbose and --trace command line switches.
+
 Contributing to Dropcaster
 ==========================
 Dropcaster is hosted at [Github](http://github.com/nerab/dropcaster):
