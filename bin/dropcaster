@@ -96,6 +96,16 @@ opts = OptionParser.new do |opts|
     puts "#{File.basename(__FILE__)} " + Dropcaster::VERSION
     exit 0
   end
+
+  opts.on("--episode-pages", "Generate a separate file for each episode.") do
+    Dropcaster.logger.info "Generating a separate file for each episode"
+    options[:episode_pages] = true
+  end
+
+  opts.on("--episode-template FILE", "Use FILE as template for generating a separate page for each episode.") do |file|
+    Dropcaster.logger.info "Using '#{file}' as episode template"
+    options[:episode_template] = file
+  end
 end
 
 opts.parse!
