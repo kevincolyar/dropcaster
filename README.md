@@ -143,11 +143,11 @@ If the `--episode-pages` switch is present, dropcaster will generate a separate 
 For example, let's assume the following directory structure:
 
         channel.yml
-        episodes/episode1/AOE001 Hello World.mp3
-        episodes/episode2/AOE002 Getting started.mp3
-        episodes/episode3/AOE003 Advanced Topics.mp3
+        episodes/episode1/AAE001 Hello World.mp3
+        episodes/episode2/AAE002 Getting started.mp3
+        episodes/episode3/AAE003 Advanced Topics.mp3
 
-Dropcaster would typically be called like this:
+With this directory structure, dropcaster would typically be called like this:
 
         dropcaster episodes/episode* --channel channel.yml
 
@@ -165,12 +165,12 @@ As a result, each episode will get an HTML page next to the MP3 file. The defaul
 
         channel.yml
         index.html
-        episodes/episode1/AOE001 Hello World.mp3
-        episodes/episode1/AOE001 Hello World.html
-        episodes/episode2/AOE002 Getting started.mp3
-        episodes/episode2/AOE002 Getting started.html
-        episodes/episode3/AOE003 Advanced Topics.mp3
-        episodes/episode3/AOE003 Advanced Topics.html
+        episodes/episode1/AAE001 Hello World.mp3
+        episodes/episode1/AAE001 Hello World.html
+        episodes/episode2/AAE002 Getting started.mp3
+        episodes/episode2/AAE002 Getting started.html
+        episodes/episode3/AAE003 Advanced Topics.mp3
+        episodes/episode3/AAE003 Advanced Topics.html
 
 Please note that the example above only deals with HTML pages. The RSS feed would still have to be generated with a second call to dropcaster (see the earlier sections of this page).
 
