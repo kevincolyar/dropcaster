@@ -12,6 +12,7 @@ GEM
     libxml-ruby (2.2.1-x86-mingw32)
     rake (0.8.7)
     rdoc (3.9.3)
+    redcarpet (1.17.2)
     ruby-mp3info (0.6.15)
 
 PLATFORMS
@@ -26,4 +27,5 @@ DEPENDENCIES
   libxml-ruby
   rake (= 0.8.7)
   rdoc
+  redcarpet
   ruby-mp3info

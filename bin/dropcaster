@@ -134,7 +134,20 @@ end
 Dropcaster.logger.info "Generating the channel with these options: #{options.inspect}"
 
 begin
-  puts Dropcaster::Channel.new(sources, options).to_rss
+  channel = Dropcaster::Channel.new(sources, options)
+  puts channel.to_rss
+
+  # write episode files if asked for
+  if (options[:episode_pages])
+    Dropcaster.logger.debug("Writing episode pages")
+
+    channel.items.each{|item|
+      File.open(item.page_file_name, 'w'){|f|
+        Dropcaster.logger.debug("Writing episode page #{item.page_file_name}")
+        f.write(item.to_html)
+      }
+    }
+  end
 rescue
   Dropcaster.logger.error $!.message
   Dropcaster.logger.error $!.backtrace.join("\n")

@@ -2,6 +2,7 @@ source :rubygems
 
 gem 'ruby-mp3info'
 gem 'activesupport'
+gem 'redcarpet'
 
 group :development do
   gem "rake", "0.8.7" # http://stackoverflow.com/questions/6085610

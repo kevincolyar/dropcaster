@@ -176,6 +176,8 @@ Please note that the example above only deals with HTML pages. The RSS feed woul
 
 Dropcaster will use its default template for generating the episode pages. It is also possible to specify a custom episode template with the `--episode-template` switch, passing the name of a custom episode template file (similar to a custom channel template).
 
+The major difference between the channel and episode HTML templates is that the episodes write out lyrics. For podcasts, lyrics are used for an in-depth description of the episode. Any text is treated as [Markdown](http://daringfireball.net/projects/markdown/) and converted to HTML.
+
 Sidecar files
 -------------
 You may override the meta data for any episode by providing a YAML file with the same name as the mp3 file, but with an extension of yml or yaml (ususally refered to as [sidecar file](http://en.wikipedia.org/wiki/Sidecar_file)). Any attributes specified in this file override the ID tags in the mp3 file.

@@ -1,4 +1,4 @@
-* If the option for the item template is present (e.g. --item-template templates/item.html.erb), generate individual html pages for each item from it and link to it from the index.html. Leave it off by default.
+* Replace the current ID3 lib with [taglib-ruby](https://github.com/robinst/taglib-ruby)
 * Derive nice-looking HTML templates from Wordpress' Twenty Eleven theme. Potentially add disqus widgets.
 * Print warnings when one of the specs from http://www.apple.com/itunes/podcasts/specs.html is violated
 * Allow muting of the iTunes warnings (see above) using a commandline switch

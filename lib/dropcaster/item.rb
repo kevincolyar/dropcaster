@@ -1,12 +1,11 @@
-require 'mp3info'
-require 'digest/sha1'
-
 module Dropcaster
   class Item < DelegateClass(Hash)
+    include ERB::Util # for h() in the ERB template
     include HashKeys
 
-    def initialize(file_path, options = nil)
+    def initialize(channel, file_path, options = nil)
       super(Hash.new)
+      self.channel = channel # item belongs_to channel
 
       Mp3Info.open(file_path){|mp3info|
         self[:file_name] = Pathname.new(File.expand_path(file_path)).relative_path_from(Pathname.new(Dir.pwd)).cleanpath.to_s
@@ -14,6 +13,8 @@ module Dropcaster
         self[:tag2] = mp3info.tag2
         self[:duration] = mp3info.length
       }
+    
+      self.page_file_name = self.file_name.chomp(File.extname(self.file_name)) << ".html"
 
       self[:file_size] = File.new(self.file_name).stat.size
       self[:uuid] = Digest::SHA1.hexdigest(File.read(self.file_name))
@@ -34,14 +35,20 @@ module Dropcaster
       end
 
       # Convert lyrics frame into a hash, keyed by the three-letter language code
-      if tag2.ULT
-        lyrics_parts = tag2.ULT.split(0.chr)
+      self.lyrics = Hash.new
+      unless tag2.ULT.blank?
+        lyrics_parts = tag2.ULT.split(0.chr) # Split lyrics as they are separated by null characters. TODO This should be parsed by the ID3 parser, not us.
 
         if lyrics_parts && 3 == lyrics_parts.size
-          self.lyrics = Hash.new
-          self.lyrics[lyrics_parts[1]] = lyrics_parts[2]
+          self.lyrics[lyrics_parts[1]] = Redcarpet.new(lyrics_parts[2]).to_html
         end
       end
+      
+      @episode_erb_template = Dropcaster.build_template(options[:episode_template], 'episode.html.erb')
+    end
+    
+    def to_html
+      @episode_erb_template.result(binding)
     end
   end
 end

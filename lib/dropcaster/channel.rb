@@ -1,6 +1,3 @@
-require 'erb'
-require 'uri'
-
 module Dropcaster
   #
   # Represents a podcast feed in the RSS 2.0 format
@@ -9,7 +6,6 @@ module Dropcaster
     include ERB::Util # for h() in the ERB template
     include HashKeys
 
-    STORAGE_UNITS = %w(Byte KB MB GB TB)
     MAX_KEYWORD_COUNT = 12
 
     # Instantiate a new Channel object. +sources+ must be present and can be a String or Array
@@ -58,11 +54,7 @@ module Dropcaster
       # Warn if keyword count is larger than recommended
       assert_keyword_count(self.keywords)
 
-      @channel_erb_template = build_template(self.channel_template, 'channel.rss.erb')
-
-      if (self[:episode_pages])
-        @episode_erb_template = build_template(self.episode_template, 'episode.html.erb')
-      end
+      @channel_erb_template = Dropcaster.build_template(self.channel_template, 'channel.rss.erb')
     end
 
     #
@@ -70,29 +62,18 @@ module Dropcaster
     # of an ERB template. By default, it is expected as ../../templates/channel.rss.erb (relative to channel.rb).
     #
     def to_rss
-      # write episode files if asked for
-      if (self[:episode_pages])
-        Dropcaster.logger.debug("Writing episode pages")
-
-        items.each{|item|
-          page_file = item.file_name.chomp(File.extname(item.file_name) << ".html"
-          File.open(page_file), 'w'){|f|
-            Dropcaster.logger.debug("Writing episode page #{page_file}")
-            f.write(@episode_erb_template.result(binding))
-          }
-        }
-      end
-
       @channel_erb_template.result(binding)
     end
 
+    #
+    # Channel has_many items
     #
     # Returns all items (episodes) of this channel, ordered by newest-first.
     #
     def items
       all_items = Array.new
       @source_files.each{|src|
-        item = Item.new(src)
+        item = Item.new(self, src, {:episode_template => self.episode_template})
 
         Dropcaster.logger.debug("Adding new item from file #{src}")
 
@@ -123,37 +104,6 @@ module Dropcaster
 
       # Sort result by newest first
       all_items.sort{|x, y| y.pub_date <=> x.pub_date}
-    end
-
-    # from http://stackoverflow.com/questions/4136248
-    def humanize_time(secs)
-      [[60, :s], [60, :m], [24, :h], [1000, :d]].map{ |count, name|
-        if secs > 0
-          secs, n = secs.divmod(count)
-          "#{n.to_i}#{name}"
-        end
-      }.compact.reverse.join(' ')
-    end
-
-    # Fixed version of https://gist.github.com/260184
-    def humanize_size(number)
-      return nil if number.nil?
-
-      storage_units_format = '%n %u'
-
-      if number.to_i < 1024
-        unit = number > 1 ? 'Bytes' : 'Byte'
-        return storage_units_format.gsub(/%n/, number.to_i.to_s).gsub(/%u/, unit)
-      else
-        max_exp  = STORAGE_UNITS.size - 1
-        number   = Float(number)
-        exponent = (Math.log(number) / Math.log(1024)).to_i # Convert to base 1024
-        exponent = max_exp if exponent > max_exp # we need this to avoid overflow for the highest unit
-        number  /= 1024 ** exponent
-
-        unit = STORAGE_UNITS[exponent]
-        return storage_units_format.gsub(/%n/, number.to_i.to_s).gsub(/%u/, unit)
-      end
     end
 
   private
@@ -195,19 +145,6 @@ module Dropcaster
     def assert_keyword_count(keywords)
       if keywords && MAX_KEYWORD_COUNT < keywords.size
         Dropcaster.logger.info("The list of keywords has #{keywords.size} entries, which exceeds the recommended maximum of #{MAX_KEYWORD_COUNT}.")
-      end
-    end
-
-    #
-    # Create a new ERB template from the given file path. Fall back to default if not found.
-    #
-    def build_template(template_path, default_path)
-      template = template_path || File.join(File.dirname(__FILE__), '..', '..', 'templates', default_path)
-
-      begin
-        ERB.new(File.new(template), 0, "%<>")
-      rescue Errno::ENOENT => e
-        raise TemplateNotFoundError.new(e.message)
       end
     end
   end
