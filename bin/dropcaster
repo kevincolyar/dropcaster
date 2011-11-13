@@ -142,10 +142,16 @@ begin
     Dropcaster.logger.debug("Writing episode pages")
 
     channel.items.each{|item|
-      File.open(item.page_file_name, 'w'){|f|
-        Dropcaster.logger.debug("Writing episode page #{item.page_file_name}")
-        f.write(item.to_html)
-      }
+      if File.exists?(item.page_file_name) && !options[:force]
+        Dropcaster.logger.warn "Episode page '#{item.page_file_name}' already exists. Use --force to force overwriting the file."
+      else
+        Dropcaster.logger.info "Overwriting '#{item.page_file_name}' due to --force option." if options[:force]
+
+        File.open(item.page_file_name, 'w'){|f|
+          Dropcaster.logger.debug("Writing episode page #{item.page_file_name}")
+          f.write(item.to_html)
+        }
+      end
     }
   end
 rescue
