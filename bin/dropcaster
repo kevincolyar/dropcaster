@@ -39,6 +39,12 @@ opts = OptionParser.new do |opts|
     Dropcaster.logger.level = Logger::INFO
   end
 
+  opts.on("--trace", "Trace (debug) mode - displays debug information and stack traces") do |file|
+    Dropcaster.logger = Logger.new(STDERR)
+    Dropcaster.logger.formatter = Dropcaster::LogFormatter.new
+    Dropcaster.logger.level = Logger::DEBUG
+  end
+
   opts.on("--channel FILE", "Read the channel definition from FILE instead of channel.yml in the current directory.") do |file|
     begin
       Dropcaster.logger.info "Reading channel definition from #{file}"
@@ -116,7 +122,7 @@ begin
   puts Dropcaster::Channel.new(sources, options).to_rss
 rescue
   Dropcaster.logger.error $!.message
-  Dropcaster.logger.debug $!.backtrace
+  $!.backtrace.each{|line| Dropcaster.logger.error line }
   Dropcaster.logger.info usage
   exit(1)
 end
