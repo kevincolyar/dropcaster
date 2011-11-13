@@ -4,7 +4,7 @@ class TestItem < Test::Unit::TestCase
   include DropcasterTest
 
   def setup
-    @item = Dropcaster::Item.new(FIXTURE_ITUNES_MP3)
+    @item = Dropcaster::Item.new(nil, FIXTURE_ITUNES_MP3)
   end
 
   def test_basics
@@ -42,7 +42,7 @@ class TestItem < Test::Unit::TestCase
 
   def test_lyrics
     assert_equal(1, @item.lyrics.size)
-    assert_equal("iTunes Lyrics Line 1\niTunes Lyrics Line 2", @item.lyrics['eng'])
+    assert_equal("<p>iTunes Lyrics Line 1\niTunes Lyrics Line 2</p>\n", @item.lyrics['eng'])
   end
 
   def test_comment_remove_itunes_crap

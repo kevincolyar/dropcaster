@@ -3,7 +3,7 @@ module Dropcaster
     include ERB::Util # for h() in the ERB template
     include HashKeys
 
-    def initialize(channel, file_path, options = nil)
+    def initialize(channel, file_path, options = {})
       super(Hash.new)
       self.channel = channel # item belongs_to channel
 
