@@ -23,15 +23,16 @@
     <p><%= h(tag2.TT3) %></p>
   <% end %>
     <img src="<%= image_url %>"/>
+    <audio src="<%= url %>" preload="none" controls="controls"></audio>
+    <p>Download: <a href="<%= url %>">MP3</a> (<%= Dropcaster.humanize_time(duration.to_i) %>, <%= Dropcaster.humanize_size(file_size) %>)</p>
+    <p>Published <%= h(pub_date.to_formatted_s(:rfc822)) %></p>
+  <% unless keywords.blank? %>
+    <p>Keywords: <%= keywords.map{|k| h(k)}.join(',') %></p>
+  <% end %>
   <% lyrics.each do |lang, text| %>
     <p lang="<%= lang %>">
       <%= text %>
     </p>
-  <% end %>
-    <p>Download: <a href="<%= url %>">MP3</a> (<%= Dropcaster.humanize_time(duration.to_i) %>, <%= Dropcaster.humanize_size(file_size) %>)</p>
-    <p>Published <%= h(pub_date.to_formatted_s(:rfc822)) %></p>
-  <% unless keywords.blank? %>
-    <p><%= keywords.map{|k| h(k)}.join(',') %></p>
   <% end %>
 </body>
 </html>
