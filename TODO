@@ -1,5 +1,5 @@
 * Replace the current ID3 lib with [taglib-ruby](https://github.com/robinst/taglib-ruby)
-* Derive nice-looking HTML templates from Wordpress' Twenty Eleven theme. Potentially add disqus widgets.
+* Derive nice-looking HTML templates from Wordpress' Twenty Eleven theme. Potentially add disqus widgets and a Flattr button for demo purposes.
 * Print warnings when one of the specs from http://www.apple.com/itunes/podcasts/specs.html is violated
 * Allow muting of the iTunes warnings (see above) using a commandline switch
 * Implement sidecar files
