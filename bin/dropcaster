@@ -122,7 +122,7 @@ begin
   puts Dropcaster::Channel.new(sources, options).to_rss
 rescue
   Dropcaster.logger.error $!.message
-  $!.backtrace.each{|line| Dropcaster.logger.error line }
+  Dropcaster.logger.error $!.backtrace.join("\n")
   Dropcaster.logger.info usage
   exit(1)
 end
