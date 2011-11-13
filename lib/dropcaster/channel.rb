@@ -67,11 +67,23 @@ module Dropcaster
 
     #
     # Returns this channel as an RSS representation. The actual rendering is done with the help
-    # of an ERB template. By default, it is expected as ../../templates/channel.rss.erb (relative)
-    # to channel.rb.
+    # of an ERB template. By default, it is expected as ../../templates/channel.rss.erb (relative to channel.rb).
     #
     def to_rss
-      @erb_template.result(binding)
+      # write episode files if asked for
+      if (self[:episode_pages])
+        Dropcaster.logger.debug("Writing episode pages")
+
+        items.each{|item|
+          page_file = item.file_name.chomp(File.extname(item.file_name) << ".html"
+          File.open(page_file), 'w'){|f|
+            Dropcaster.logger.debug("Writing episode page #{page_file}")
+            f.write(@episode_erb_template.result(binding))
+          }
+        }
+      end
+
+      @channel_erb_template.result(binding)
     end
 
     #
@@ -170,7 +182,7 @@ module Dropcaster
     # http://snippets.dzone.com/posts/show/4578
     #
     def truncate(string, count = 30)
-    	if string.length >= count 
+      if string.length >= count
     		shortened = string[0, count]
     		splitted = shortened.split(/\s/)
     		words = splitted.length
@@ -178,7 +190,7 @@ module Dropcaster
     	else
     		string
     	end
-    end    
+    end
 
     def assert_keyword_count(keywords)
       if keywords && MAX_KEYWORD_COUNT < keywords.size
