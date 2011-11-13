@@ -183,7 +183,9 @@ module Dropcaster
     end    
 
     def assert_keyword_count(keywords)
-      Dropcaster.logger.info("The list of keywords has #{keywords.size} entries, which exceeds the recommended maximum of #{MAX_KEYWORD_COUNT}.") if keywords && MAX_KEYWORD_COUNT < keywords.size
+      if keywords && MAX_KEYWORD_COUNT < keywords.size
+        Dropcaster.logger.info("The list of keywords has #{keywords.size} entries, which exceeds the recommended maximum of #{MAX_KEYWORD_COUNT}.") 
+      end
     end
   end
 end
