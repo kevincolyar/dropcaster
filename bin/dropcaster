@@ -88,7 +88,7 @@ opts = OptionParser.new do |opts|
   end
 
   opts.on("--channel-template FILE", "Use FILE as template for generating the channel feed. Overrides the default that comes with Dropcaster.") do |file|
-    Dropcaster.logger.info "Using'#{file}' as channel template file"
+    Dropcaster.logger.info "Using '#{file}' as channel template file"
     options[:channel_template] = file
   end
 
