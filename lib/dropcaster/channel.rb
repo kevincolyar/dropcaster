@@ -106,6 +106,12 @@ module Dropcaster
         all_items << item
       }
 
+      # Print a warning if no episodes were found
+      if 0 == all_items.size
+        Dropcaster.logger.warn("No episodes found.")
+      end
+
+      # Sort result by newest first
       all_items.sort{|x, y| y.pub_date <=> x.pub_date}
     end
 
