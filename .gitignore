@@ -12,3 +12,5 @@ rdoc/
 
 # jeweler generated
 pkg
+
+tmp
