@@ -57,13 +57,11 @@ module Dropcaster
 
       # Warn if keyword count is larger than recommended
       assert_keyword_count(self.keywords)
-    
-      channel_template = self.channel_template || File.join(File.dirname(__FILE__), '..', '..', 'templates', 'channel.rss.erb')
 
-      begin
-        @erb_template = ERB.new(File.new(channel_template), 0, "%<>")
-      rescue Errno::ENOENT => e
-        raise TemplateNotFoundError.new(e.message)
+      @channel_erb_template = build_template(self.channel_template, 'channel.rss.erb')
+
+      if (self[:episode_pages])
+        @episode_erb_template = build_template(self.episode_template, 'episode.html.erb')
       end
     end
 
@@ -184,7 +182,20 @@ module Dropcaster
 
     def assert_keyword_count(keywords)
       if keywords && MAX_KEYWORD_COUNT < keywords.size
-        Dropcaster.logger.info("The list of keywords has #{keywords.size} entries, which exceeds the recommended maximum of #{MAX_KEYWORD_COUNT}.") 
+        Dropcaster.logger.info("The list of keywords has #{keywords.size} entries, which exceeds the recommended maximum of #{MAX_KEYWORD_COUNT}.")
+      end
+    end
+
+    #
+    # Create a new ERB template from the given file path. Fall back to default if not found.
+    #
+    def build_template(template_path, default_path)
+      template = template_path || File.join(File.dirname(__FILE__), '..', '..', 'templates', default_path)
+
+      begin
+        ERB.new(File.new(template), 0, "%<>")
+      rescue Errno::ENOENT => e
+        raise TemplateNotFoundError.new(e.message)
       end
     end
   end
