@@ -3,32 +3,76 @@
 
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu/trusty64'
-  config.vm.synced_folder '..', '/dropcaster'
 
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = '256'
   end
 
-  %w(1.9.1 2.0 2.1 2.2).each do |version|
+  config.vm.synced_folder '..', '/dropcaster'
+
+  VERSIONS = %w(1.9.1 2.0 2.1 2.2)
+  ROLES = %w(dev release)
+  MANAGERS = %w(apt rvm rbenv)
+
+  VERSIONS.product(ROLES, MANAGERS).each do |version, role, manager|
     ruby = "ruby#{version}"
-    name = "ruby-#{version.tr('.', '-')}"
+    name = "#{role}-ruby-#{version}-#{manager}"
 
     config.vm.define(name) do |cfg|
       cfg.vm.hostname = name
       cfg.vm.provision 'shell', inline: <<-SHELL
-        sudo apt-get install software-properties-common
-        sudo add-apt-repository ppa:brightbox/ruby-ng
-        sudo apt-get update
-        sudo apt-get install -y git libxml2-dev zlib1g-dev #{ruby} #{ruby}-dev
-
         sudo su -c 'echo "LC_ALL=en_US.UTF-8" >> /etc/environment'
         touch .hushlogin
-
-        sudo gem install bundler
-        cd /dropcaster
-        bundle
-        bundle exec rake
       SHELL
+
+      case manager
+        when 'apt'
+          cfg.vm.provision 'shell', inline: <<-SHELL
+            apt-get install software-properties-common
+            add-apt-repository ppa:brightbox/ruby-ng
+            apt-get update
+            apt-get install -y #{ruby}
+          SHELL
+        when 'rvm'
+          cfg.vm.provision 'shell', privileged: false, inline: <<-SHELL
+            gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+            curl -sSL https://get.rvm.io | bash -s stable --ruby=#{version}
+          SHELL
+        when 'rbenv'
+          # TBD
+      end
+
+      if 'dev' == role
+        # dev boxes needs additional apt packages
+        cfg.vm.provision 'shell', inline: "apt-get install -y git libxml2-dev zlib1g-dev #{ruby}-dev"
+
+        # JSON on 1.9.1 needs dev tools :-(
+        if '1.9.1' == version
+          cfg.vm.provision 'shell', inline: <<-SHELL
+            apt-get install -y #{ruby}-dev
+          SHELL
+        end
+
+        # install the gem dependencies and run tests
+        cfg.vm.provision 'shell', privileged: false, inline: <<-SHELL
+          gem install bundler
+          cd /dropcaster
+          bundle
+          bundle exec rake
+        SHELL
+      else
+        # install the packaged dropcaster gem
+        cfg.vm.provision 'shell', privileged: false, inline: <<-SHELL
+          gem install /dropcaster/pkg/dropcaster*.gem
+        SHELL
+
+        config.vm.post_up_message = <<-MSG
+        You can test the dropcaster gem by running the following command in the VM:
+
+          dropcaster --channel /var/lib/gems/*/gems/dropcaster-*/test/fixtures/channel.yml
+
+        MSG
+      end
     end
   end
 end
