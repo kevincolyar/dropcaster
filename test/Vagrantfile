@@ -61,14 +61,10 @@ Vagrant.configure(2) do |config|
           bundle exec rake
         SHELL
       else
-        # install the packaged dropcaster gem
-        cfg.vm.provision 'shell', privileged: false, inline: <<-SHELL
-          gem install /dropcaster/pkg/dropcaster*.gem
-        SHELL
-
         config.vm.post_up_message = <<-MSG
         You can test the dropcaster gem by running the following command in the VM:
 
+          gem install /dropcaster/pkg/dropcaster*.gem
           dropcaster --channel /var/lib/gems/*/gems/dropcaster-*/test/fixtures/channel.yml
 
         MSG
