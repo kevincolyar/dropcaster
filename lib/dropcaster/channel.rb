@@ -105,7 +105,7 @@ module Dropcaster
         all_items << item
       }
 
-      all_items.sort{|x, y| y.pub_date <=> x.pub_date}
+      all_items.sort{|x, y| y.file_name <=> x.file_name}
     end
 
     # from http://stackoverflow.com/questions/4136248
@@ -152,7 +152,7 @@ module Dropcaster
   private
     def add_files(src)
       if File.directory?(src)
-        @source_files.concat(Dir.glob(File.join(src, '*.mp3')))
+        @source_files.concat(Dir.glob(File.join(src, '**', '*.{mp3,m4b,m4a}')))
       else
         @source_files << src
       end

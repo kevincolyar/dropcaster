@@ -54,7 +54,6 @@
       <itunes:image href="<%= item.image_url %>"/>
       <enclosure url="<%= item.url %>" length="<%= item.file_size %>" type="audio/mp3"/>
       <guid isPermaLink="false"><%= h(item.uuid) %></guid>
-      <pubDate><%= h(item.pub_date.to_formatted_s(:rfc822)) %></pubDate>
       <itunes:duration><%= item.duration.to_i %></itunes:duration>
     <% unless item.keywords.blank? %>
       <itunes:keywords><%= item.keywords.map{|k| h(k)}.join(',') %></itunes:keywords>
